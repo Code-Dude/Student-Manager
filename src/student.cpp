@@ -6,9 +6,19 @@
  */
 
 #include "student.h"
+#include <iostream>
+
+Student::Student() {
+	this->studentID = "";
+	this->firstName =  "";
+	this->lastName = "";
+	this->emailAddress = "";
+	this->age = 0;
+	this->courseTimes = {0, 0, 0};
+};
 
 Student::Student(
-		int studentID = 0,
+		std::string studentID = "",
 		std::string firstName = "",
 		std::string lastName = "",
 		std::string emailAddress = "",
@@ -27,10 +37,9 @@ Student::Student(
 }
 
 Student::~Student() {
-	// TODO Auto-generated destructor stub
 }
 
-int Student::GetID() {
+std::string Student::GetID() {
 	return this->studentID;
 }
 
@@ -54,7 +63,19 @@ std::array<int, 3> Student::GetCourseTimes() {
 	return courseTimes;
 }
 
-void Student::SetID(int ID) {
+void Student::Print() {
+	std::array<int, 3> courses = GetCourseTimes();
+
+	std::cout << "Student ID: " << GetID() << "\t"
+			  << "First Name: " << GetFName() << "\t"
+			  << "Last Name: " << GetLName() << "\t"
+			  << "Age: " << GetAge() << "\t"
+			  << "Days In Course: " << "{" << courses[0] << ", "
+			  << courses[1] << ", " << courses[2] << "}\t"
+			  << std::endl;
+}
+
+void Student::SetID(std::string ID) {
 	studentID = ID;
 
 	return;

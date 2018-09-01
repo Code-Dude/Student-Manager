@@ -14,9 +14,10 @@
 
 class Student {
 public:
-	// Constructor
+	// Constructors
+	Student();
 	Student(
-			int studentID,
+			std::string studentID,
 			std::string firstName,
 			std::string lastName,
 			std::string emailAddress,
@@ -30,17 +31,19 @@ public:
 	virtual ~Student();
 
 	// Getters
-	int GetID();
+	std::string GetID();
 	std::string GetFName();
 	std::string GetLName();
 	std::string GetEmail();
 	int GetAge();
 	std::array<int, 3> GetCourseTimes();
-	virtual void Print() = 0;
 	virtual Degree getDegreeProgram() = 0;
 
+	//Print
+	virtual void Print();
+
 	// Setters
-	void SetID(int ID);
+	void SetID(std::string ID);
 	void SetFName(std::string firstName);
 	void SetLName(std::string lastName);
 	void SetEmail(std::string email);
@@ -50,7 +53,7 @@ public:
 
 
 private:
-	int studentID;
+	std::string studentID;
 	std::string firstName;
 	std::string lastName;
 	std::string emailAddress;
