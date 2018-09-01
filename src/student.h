@@ -9,8 +9,8 @@
 #define SRC_STUDENT_H_
 
 #include <string>
-#include "degree.h"
 #include <array>
+#include "degree.h"
 
 class Student {
 public:
