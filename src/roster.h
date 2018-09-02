@@ -13,7 +13,8 @@
 
 class Roster {
 public:
-	std::array<std::array<std::string, 9>, 5> ParseStudents(const std::string studentsAsStrings[], const int arraySize);
+	Roster();
+	void ParseStudents(const std::string studentsAsStrings[], const int arraySize);
 	void add(
 				std::string studentID, std::string firstName, std::string lastName,
 				std::string email, int age, int daysInCourse1, int daysInCourse2,
@@ -21,10 +22,13 @@ public:
 			);
 	int GetCurrentNumStudents();
 	void UpdateCurrentNumStudents(bool increment);
+	void convertStringsToStudents(std::string studentValues[], int arraySize);
+	Degree stringToDegree(std::string degreeString);
+	void PrintAll();
 
 private:
 	std::array<Student*, 5> classRosterArray;
-	int currentNumberOfStudents = 0;
+	int currentNumberOfStudents;
 };
 
 #endif /* SRC_ROSTER_H_ */

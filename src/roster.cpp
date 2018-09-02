@@ -15,27 +15,82 @@
 #include "softwareStudent.h"
 #include <array>
 
-std::array<std::array<std::string, 9>, 5> Roster::ParseStudents(const std::string studentsAsStrings[], const int arraySize) {
-	std::array<std::array<std::string, 9>, 5> parsedStudents;
-	int currentArrayLocation = 0;
+Roster::Roster() {
+	for(int i = 0; i < 5; ++i) {
+		this->classRosterArray.at(i) = nullptr;
+	}
+
+	this->currentNumberOfStudents = 0;
+}
+
+ void Roster::convertStringsToStudents(std::string studentValues[], int arraySize) {
+	std::string newStudentID = "";
+	std::string newFirstName = "";
+	std::string newLastName = "";
+	std::string newEmail = "";
+	int newAge = 0;
+	int newCourse1 = 0;
+	int newCourse2 = 0;
+	int newCourse3 = 0;
+	Degree newDegreeProgram;
+	for(int i = 0; i < 9; ++i) {
+		if(i == 0) {
+			newStudentID = studentValues[i];
+		}
+		else if(i == 1) {
+			newFirstName = studentValues[i];
+		}
+		else if(i == 2) {
+			newLastName = studentValues[i];
+		}
+		else if(i == 3) {
+			newEmail = studentValues[i];
+		}
+		else if(i == 4) {
+			newAge = std::stoi(studentValues[i]);
+		}
+		else if(i == 5) {
+			newCourse1 = std::stoi(studentValues[i]);
+		}
+		else if(i == 6) {
+			newCourse2 = std::stoi(studentValues[i]);
+		}
+		else if(i == 7) {
+			newCourse3 = std::stoi(studentValues[i]);
+		}
+		else if(i == 8) {
+			newDegreeProgram = stringToDegree(studentValues[i]);
+		}
+		else {
+			std::cout << "Couldn't add field: " << i << std::endl;
+		}
+	}
+
+	add(newStudentID, newFirstName, newLastName, newEmail, newAge, newCourse1, newCourse2, newCourse3, newDegreeProgram);
+}
+
+void Roster::ParseStudents(const std::string studentsAsStrings[], const int arraySize) {
+	int numberOfParams = 9;
+	std::string tempSubstring = "";
+	std::string studentParams[numberOfParams];
+	int currentParameter = 0;
 	unsigned int commaLocation = 0;
 
 	for(int i = 0; i < arraySize; ++i) {
 	    commaLocation = 0;
-	    currentArrayLocation = 0;
+	    currentParameter = 0;
 
 	    std::string currentArrayString = studentsAsStrings[i];
-	    while(commaLocation != std::string::npos) {
-	      std::string tempSubstring = "";
+	    while(currentParameter < 9) {
 	      commaLocation = currentArrayString.find_first_of(',');
 	      tempSubstring = currentArrayString.substr(0, commaLocation);
-	      parsedStudents[i][currentArrayLocation] = tempSubstring;
+	      studentParams[currentParameter] = tempSubstring;
 	      currentArrayString.erase(0, commaLocation + 1);
-	      ++currentArrayLocation;
+	      ++currentParameter;
 	    }
-	}
 
-	return parsedStudents;
+	    convertStringsToStudents(studentParams, numberOfParams);
+	}
 }
 
 void Roster::add
@@ -46,7 +101,8 @@ void Roster::add
 		) {
 
 	if(degreeProgram == Degree::SECURITY) {
-		SecurityStudent newSecurityStudent
+		SecurityStudent* newSecurityStudent = nullptr;
+		newSecurityStudent = new SecurityStudent
 					(
 						studentID,
 						firstName,
@@ -58,10 +114,12 @@ void Roster::add
 						daysInCourse3,
 						degreeProgram
 					);
-			this->classRosterArray.at(GetCurrentNumStudents()) = &newSecurityStudent;
+			this->classRosterArray[GetCurrentNumStudents()] = newSecurityStudent;
+			UpdateCurrentNumStudents(true);
 	}
 	else if(degreeProgram == Degree::NETWORK) {
-		NetworkStudent newNetworkStudent
+		NetworkStudent* newNetworkStudent = nullptr;
+		newNetworkStudent = new NetworkStudent
 				(
 					studentID,
 					firstName,
@@ -73,10 +131,12 @@ void Roster::add
 					daysInCourse3,
 					degreeProgram
 				);
-		this->classRosterArray[GetCurrentNumStudents()] = &newNetworkStudent;
+		this->classRosterArray[GetCurrentNumStudents()] = newNetworkStudent;
+		UpdateCurrentNumStudents(true);
 	}
 	else if(degreeProgram == Degree::SOFTWARE) {
-		SoftwareStudent newSoftwareStudent
+		SoftwareStudent* newSoftwareStudent = nullptr;
+		newSoftwareStudent = new SoftwareStudent
 				(
 					studentID,
 					firstName,
@@ -88,11 +148,24 @@ void Roster::add
 					daysInCourse3,
 					degreeProgram
 				);
-		this->classRosterArray[GetCurrentNumStudents()] = &newSoftwareStudent;
+		this->classRosterArray[GetCurrentNumStudents()] = newSoftwareStudent;
+		UpdateCurrentNumStudents(true);
 	}
 	else {
 		std::cout << "Couldn't add student to Roster." << std::endl;
 	}
+}
+
+Degree Roster::stringToDegree(std::string degreeString) {
+  if(degreeString == "SECURITY") {
+    return SECURITY;
+  }
+  else if(degreeString == "NETWORK") {
+    return NETWORK;
+  }
+  else if(degreeString == "SOFTWARE") {
+    return SOFTWARE;
+  }
 }
 
 int Roster::GetCurrentNumStudents() {
@@ -105,6 +178,12 @@ void Roster::UpdateCurrentNumStudents(bool increment) {
 	}
 	else {
 		this->currentNumberOfStudents -= 1;
+	}
+}
+
+void Roster::PrintAll() {
+	for(int i = 0; i < GetCurrentNumStudents(); ++i) {
+		this->classRosterArray.at(i)->Print();
 	}
 }
 
@@ -122,15 +201,9 @@ int main() {
 
 	Roster myRoster;
 
-	std::array<std::array<std::string, 9>, 5> students = myRoster.ParseStudents(studentData, STUDENT_DATA_SIZE);
-	for(int i = 0; i < STUDENT_DATA_SIZE; ++i) {
-		for(int j = 0; j < 9; ++j) {
-			std::cout << students[i][j] << " ";
-		}
+	myRoster.ParseStudents(studentData, STUDENT_DATA_SIZE);
 
-		std::cout << std::endl;
-	}
-
+	myRoster.PrintAll();
 	return 0;
 }
 
