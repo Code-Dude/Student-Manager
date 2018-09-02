@@ -7,6 +7,10 @@
 
 #include "securityStudent.h"
 
+SecurityStudent::SecurityStudent() {
+	degreeProgram = Degree::SECURITY;
+}
+
 SecurityStudent::SecurityStudent
 		(
 			std::string studentID,
@@ -42,4 +46,13 @@ void SecurityStudent::SetDegreeProgram(Degree newProgram) {
 	degreeProgram = newProgram;
 
 	return;
+}
+
+void SecurityStudent::Print() {
+	std::cout << "Student ID: " << std::setw(2) << std::left << GetID();
+	std::cout << "\tFirst Name: " << std::setw(8) << std::left << GetFName();
+	std::cout << "\tLast Name: " << std::setw(8) << std::left << GetLName();
+	std::cout << "\tAge: " << std::setw(8) << std::left << GetAge();
+	std::cout << "\tDays In Courses: " << std::setw(10) << std::left << GetCourseTimesString();
+	std::cout << "\tDegree Program: " << "SECURITY" << std::endl;
 }

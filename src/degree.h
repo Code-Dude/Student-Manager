@@ -14,5 +14,4 @@ enum Degree {
 	SOFTWARE
 };
 
-
 #endif /* SRC_DEGREE_H_ */

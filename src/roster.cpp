@@ -5,22 +5,21 @@
  *      Author: Scott
  */
 
-#include "roster.h"
-#include "degree.h"
+
 #include <iostream>
 #include <string>
+#include <iomanip>
+#include "roster.h"
+#include "degree.h"
 #include "student.h"
 #include "securityStudent.h"
 #include "networkStudent.h"
 #include "softwareStudent.h"
-#include <array>
 
 Roster::Roster() {
-	for(int i = 0; i < 5; ++i) {
-		this->classRosterArray.at(i) = nullptr;
-	}
+}
 
-	this->currentNumberOfStudents = 0;
+Roster::~Roster() {
 }
 
  void Roster::convertStringsToStudents(std::string studentValues[], int arraySize) {
@@ -114,8 +113,7 @@ void Roster::add
 						daysInCourse3,
 						degreeProgram
 					);
-			this->classRosterArray[GetCurrentNumStudents()] = newSecurityStudent;
-			UpdateCurrentNumStudents(true);
+			this->classRosterArray.push_back(newSecurityStudent);
 	}
 	else if(degreeProgram == Degree::NETWORK) {
 		NetworkStudent* newNetworkStudent = nullptr;
@@ -131,8 +129,7 @@ void Roster::add
 					daysInCourse3,
 					degreeProgram
 				);
-		this->classRosterArray[GetCurrentNumStudents()] = newNetworkStudent;
-		UpdateCurrentNumStudents(true);
+		this->classRosterArray.push_back(newNetworkStudent);
 	}
 	else if(degreeProgram == Degree::SOFTWARE) {
 		SoftwareStudent* newSoftwareStudent = nullptr;
@@ -148,8 +145,7 @@ void Roster::add
 					daysInCourse3,
 					degreeProgram
 				);
-		this->classRosterArray[GetCurrentNumStudents()] = newSoftwareStudent;
-		UpdateCurrentNumStudents(true);
+		this->classRosterArray.push_back(newSoftwareStudent);
 	}
 	else {
 		std::cout << "Couldn't add student to Roster." << std::endl;
@@ -163,32 +159,117 @@ Degree Roster::stringToDegree(std::string degreeString) {
   else if(degreeString == "NETWORK") {
     return NETWORK;
   }
-  else if(degreeString == "SOFTWARE") {
+  else {
     return SOFTWARE;
   }
 }
 
-int Roster::GetCurrentNumStudents() {
-	return this->currentNumberOfStudents;
-}
-
-void Roster::UpdateCurrentNumStudents(bool increment) {
-	if(increment) {
-		this->currentNumberOfStudents += 1;
+std::string Roster::degreeToString(Degree degree) {
+	if(degree == Degree::SECURITY) {
+		return "SECURITY";
+	}
+	else if(degree == Degree::NETWORK) {
+		return "NETWORK";
 	}
 	else {
-		this->currentNumberOfStudents -= 1;
+		return "SOFTWARE";
 	}
 }
 
 void Roster::PrintAll() {
+	for(unsigned int i = 0; i < this->classRosterArray.size(); ++i) {
+		classRosterArray.at(i)->Print();
+	}
+}
+
+int Roster::GetCurrentNumStudents() {
+	return classRosterArray.size();
+}
+
+void Roster::remove(std::string studentID) {
+	bool studentDeleted = false;
+
+
 	for(int i = 0; i < GetCurrentNumStudents(); ++i) {
-		this->classRosterArray.at(i)->Print();
+		if(classRosterArray.at(i)->GetID() == studentID) {
+			classRosterArray.erase(classRosterArray.begin() + i);
+			studentDeleted = true;
+		}
+	}
+
+	if(!studentDeleted) {
+		std::cout << "No student with ID: " << studentID << " was found..." << std::endl;
+	}
+}
+
+void Roster::printAverageDaysInCourse(std::string studentID) {
+	bool foundStudent = false;
+
+	for(int i = 0; i < GetCurrentNumStudents(); ++i) {
+		if(classRosterArray.at(i)->GetID() == studentID) {
+			std::cout << "Student ID: " << classRosterArray.at(i)->GetID();
+			std::cout << " Number of days in classes- "
+					  << classRosterArray.at(i)->GetCourseTimesString()
+					  << " Average Number of days in classes- "
+					  << classRosterArray.at(i)->getAverageCourseTime()
+					  << std::endl;
+			foundStudent = true;
+			break;
+		}
+	}
+
+	if(!foundStudent) {
+		std::cout << "No student with ID: " << studentID << " was found..." << std::endl;
+	}
+}
+
+bool Roster::validateEmail(std::string email) {
+	int numAtsigns = 0;
+	int numPeriods = 0;
+
+	for(unsigned int i = 0; i < email.length(); ++i) {
+		if(email.at(i) == '.') {
+			++numPeriods;
+		}
+		else if(email.at(i) == '@') {
+			++numAtsigns;
+		}
+		else if(email.at(i) == ' ') {
+			return false;
+		}
+	}
+
+	if(numPeriods == 1 && numAtsigns == 1) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+void Roster::printInvalidEmails() {
+	for(int i = 0; i < GetCurrentNumStudents(); ++i) {
+		std::string email = classRosterArray.at(i)->GetEmail();
+		if(!validateEmail(email)) {
+			std::cout << "Invalid Email Address: " << email
+					  << std::endl;
+		}
+	}
+}
+
+void Roster::printByDegreeProgram(int degreeProgram) {
+	std::cout << degreeToString(static_cast<Degree>(degreeProgram))
+			  << " Students" << std::endl;
+	for(int i = 0; i < GetCurrentNumStudents(); ++i) {
+		if(classRosterArray.at(i)->getDegreeProgram() == static_cast<Degree>(degreeProgram)) {
+			classRosterArray.at(i)->Print();
+		}
 	}
 }
 
 int main() {
 	const int STUDENT_DATA_SIZE = 5;
+	std::string currentID = "";
 
 	const std::string studentData[] =
 	{
@@ -199,11 +280,26 @@ int main() {
 	 "A5,test,name,test@email.edu,23,8,30,45,SOFTWARE"
 	};
 
-	Roster myRoster;
+	Roster* classRoster;
 
-	myRoster.ParseStudents(studentData, STUDENT_DATA_SIZE);
+	classRoster = new Roster;
 
-	myRoster.PrintAll();
+	classRoster->ParseStudents(studentData, STUDENT_DATA_SIZE);
+	classRoster->PrintAll();
+	classRoster->printInvalidEmails();
+
+	for(int i = 0; i < classRoster->GetCurrentNumStudents(); ++i) {
+		currentID = classRoster->classRosterArray.at(i)->GetID();
+
+		classRoster->printAverageDaysInCourse(currentID);
+	}
+
+	classRoster->printByDegreeProgram(SOFTWARE);
+	classRoster->remove("A3");
+	classRoster->remove("A3");
+
+	delete classRoster;
+
 	return 0;
 }
 

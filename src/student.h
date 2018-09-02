@@ -10,6 +10,8 @@
 
 #include <string>
 #include <array>
+#include <iostream>
+#include <iomanip>
 #include "degree.h"
 
 class Student {
@@ -37,6 +39,8 @@ public:
 	std::string GetEmail();
 	int GetAge();
 	std::array<int, 3> GetCourseTimes();
+	std::string GetCourseTimesString();
+	int getAverageCourseTime();
 	virtual Degree getDegreeProgram() = 0;
 
 	//Print

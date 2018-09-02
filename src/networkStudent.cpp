@@ -7,6 +7,10 @@
 
 #include "networkStudent.h"
 
+NetworkStudent::NetworkStudent() {
+	degreeProgram = Degree::NETWORK;
+}
+
 NetworkStudent::NetworkStudent
 		(
 			std::string studentID,
@@ -45,3 +49,11 @@ void NetworkStudent::SetDegreeProgram(Degree newProgram) {
 	return;
 }
 
+void NetworkStudent::Print() {
+	std::cout << "Student ID: " << std::setw(2) << std::left << GetID();
+	std::cout << "\tFirst Name: " << std::setw(8) << std::left << GetFName();
+	std::cout << "\tLast Name: " << std::setw(8) << std::left << GetLName();
+	std::cout << "\tAge: " << std::setw(8) << std::left << GetAge();
+	std::cout << "\tDays In Courses: " << std::setw(10) << std::left << GetCourseTimesString();
+	std::cout << "\tDegree Program: " << "NETWORK" << std::endl;
+}

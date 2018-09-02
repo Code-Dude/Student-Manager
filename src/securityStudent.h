@@ -12,6 +12,7 @@
 
 class SecurityStudent : public Student {
 public:
+	SecurityStudent();
 	SecurityStudent(
 		std::string studentID,
 		std::string firstName,
@@ -25,6 +26,7 @@ public:
 	);
 	Degree getDegreeProgram();
 	void SetDegreeProgram(Degree newDegree);
+	virtual void Print();
 
 private:
 	Degree degreeProgram;

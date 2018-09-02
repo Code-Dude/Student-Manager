@@ -8,6 +8,8 @@
 #include "student.h"
 #include <iostream>
 
+
+
 Student::Student() {
 	this->studentID = "";
 	this->firstName =  "";
@@ -61,6 +63,32 @@ int Student::GetAge() {
 
 std::array<int, 3> Student::GetCourseTimes() {
 	return courseTimes;
+}
+
+std::string Student::GetCourseTimesString() {
+	std::string courseString = "";
+
+	courseString.append("{");
+	courseString.append(std::to_string(courseTimes[0]));
+	courseString.append(", ");
+	courseString.append(std::to_string(courseTimes[1]));
+	courseString.append(", ");
+	courseString.append(std::to_string(courseTimes[2]));
+	courseString.append("}");
+
+
+	return courseString;
+}
+
+int Student::getAverageCourseTime() {
+	int sum = 0;
+	int numberOfCourses = 3;
+
+	for(int i = 0; i < numberOfCourses; ++i) {
+		sum += courseTimes[i];
+	}
+
+	return (sum / numberOfCourses);
 }
 
 void Student::Print() {

@@ -12,6 +12,7 @@
 
 class NetworkStudent : public Student {
 public:
+	NetworkStudent();
 	NetworkStudent(
 		std::string studentID,
 		std::string firstName,
@@ -26,6 +27,7 @@ public:
 
 	Degree getDegreeProgram();
 	void SetDegreeProgram(Degree newDegree);
+	virtual void Print();
 
 private:
 	Degree degreeProgram;
